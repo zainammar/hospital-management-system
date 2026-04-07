@@ -32,9 +32,12 @@ class DoctorForm(forms.ModelForm):
             'license_number': forms.TextInput(attrs={'class': 'form-control'}),
             'experience_years': forms.NumberInput(attrs={'class': 'form-control'}),
             'consultation_fee': forms.NumberInput(attrs={'class': 'form-control'}),
-            'available_days': forms.Select(attrs={'class': 'form-select'}),
+            'available_days': forms.TextInput(attrs={'class': 'form-control'}),
+            'available_days2': forms.TextInput(attrs={'class': 'form-control'}),
             'available_from': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'available_to': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'available_from2': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'available_to2': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
