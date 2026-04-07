@@ -1,0 +1,82 @@
+{% extends 'hospital/base.html' %}
+{% block title %}{{ doctor.full_name }} — MediCare HMS{% endblock %}
+{% block page_title %}Doctor Profile{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'doctor_list' %}">Doctors</a></li>
+      <li class="breadcrumb-item active">{{ doctor.full_name }}</li>
+    </ol>
+  </nav>
+  <a href="{% url 'doctor_update' doctor.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil me-1"></i>Edit</a>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-body text-center py-4">
+        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+             style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#0ea5e9);color:white;font-size:1.75rem;font-weight:800;">
+          {{ doctor.first_name|slice:":1" }}
+        </div>
+        <h5 class="fw-bold mb-1">{{ doctor.full_name }}</h5>
+        <div class="mb-2">
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle">{{ doctor.specialization }}</span>
+        </div>
+        <div class="text-muted" style="font-size:.83rem;">{{ doctor.department.name|default:"No Department" }}</div>
+      </div>
+      <div class="card-body border-top pt-3">
+        <div class="info-item"><span class="info-label">📧 Email</span><span class="info-value">{{ doctor.email }}</span></div>
+        <div class="info-item"><span class="info-label">📞 Phone</span><span class="info-value">{{ doctor.phone }}</span></div>
+        <div class="info-item"><span class="info-label">🪪 License</span><span class="info-value"><span class="id-tag">{{ doctor.license_number }}</span></span></div>
+        <div class="info-item"><span class="info-label">⭐ Experience</span><span class="info-value">{{ doctor.experience_years }} years</span></div>
+        <div class="info-item"><span class="info-label">💵 Fee</span><span class="info-value">${{ doctor.consultation_fee }}</span></div>
+        <div class="info-item"><span class="info-label">📅 Available</span><span class="info-value">{{ doctor.available_days }}</span></div>
+        <div class="info-item"><span class="info-label">🕐 Hours</span><span class="info-value">{{ doctor.available_from }} – {{ doctor.available_to }}</span></div>
+        <div class="info-item"><span class="info-label">📅 Joined</span><span class="info-value">{{ doctor.joined_date }}</span></div>
+        <div class="info-item">
+          <span class="info-label">Status</span>
+          <span class="info-value">
+            {% if doctor.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}
+          </span>
+        </div>
+      </div>
+      {% if doctor.bio %}
+      <div class="card-body border-top pt-3">
+        <div class="form-section-title">Bio</div>
+        <p style="font-size:.85rem;color:#64748b;margin:0;">{{ doctor.bio }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-calendar-check text-primary me-2"></i>Recent Appointments</div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead><tr><th>ID</th><th>Patient</th><th>Date</th><th>Type</th><th>Status</th></tr></thead>
+            <tbody>
+              {% for apt in appointments %}
+              <tr>
+                <td><span class="id-tag">{{ apt.appointment_id }}</span></td>
+                <td><a href="{% url 'patient_detail' apt.patient.pk %}" class="text-decoration-none fw-semibold">{{ apt.patient.full_name }}</a></td>
+                <td style="font-size:.8rem;">{{ apt.appointment_date }}</td>
+                <td style="font-size:.8rem;">{{ apt.appointment_type }}</td>
+                <td><span class="badge badge-{{ apt.status|lower }}">{{ apt.status }}</span></td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="5" class="text-center text-muted py-4">No appointments yet</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

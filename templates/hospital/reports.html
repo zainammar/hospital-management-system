@@ -1,0 +1,121 @@
+{% extends 'hospital/base.html' %}
+{% block title %}Reports — MediCare HMS{% endblock %}
+{% block page_title %}Reports & Analytics{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card text-center p-3">
+      <div class="text-muted mb-1" style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Total Revenue</div>
+      <div class="fw-bold text-success" style="font-size:2rem;">${{ total_revenue|floatformat:0 }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center p-3">
+      <div class="text-muted mb-1" style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Total Patients</div>
+      <div class="fw-bold text-primary" style="font-size:2rem;">{{ total_patients }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center p-3">
+      <div class="text-muted mb-1" style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Total Appointments</div>
+      <div class="fw-bold text-purple" style="font-size:2rem;color:#6366f1;">{{ total_appointments }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <!-- Revenue by Month -->
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-bar-chart-fill text-primary me-2"></i>Revenue Last 6 Months</div>
+      <div class="card-body">
+        <canvas id="revenueChart" height="120"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Doctors -->
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-trophy-fill text-warning me-2"></i>Top Doctors by Appointments</div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead><tr><th>Doctor</th><th>Appointments</th></tr></thead>
+          <tbody>
+            {% for doc in top_doctors %}
+            <tr>
+              <td style="font-size:.83rem;">{{ doc.full_name }}</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div style="width:{{ doc.appt_count }}px;max-width:80px;height:6px;background:#0ea5e9;border-radius:3px;"></div>
+                  <span style="font-size:.8rem;font-weight:600;">{{ doc.appt_count }}</span>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="2" class="text-center text-muted py-3">No data</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Department Stats -->
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-diagram-3-fill text-secondary me-2"></i>Department Overview</div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead><tr><th>Department</th><th>Head</th><th>Doctors</th><th>Patients Seen</th></tr></thead>
+            <tbody>
+              {% for dept in dept_stats %}
+              <tr>
+                <td class="fw-semibold">{{ dept.name }}</td>
+                <td style="font-size:.83rem;" class="text-muted">{{ dept.head_doctor|default:"—" }}</td>
+                <td><span class="badge bg-primary-subtle text-primary">{{ dept.doctor_count }}</span></td>
+                <td><span class="badge bg-success-subtle text-success">{{ dept.patient_count }}</span></td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4" class="text-center text-muted py-3">No departments</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const revenueData = {{ revenue_by_month|safe }};
+const ctx = document.getElementById('revenueChart').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: revenueData.map(d => d.month).reverse(),
+    datasets: [{
+      label: 'Revenue ($)',
+      data: revenueData.map(d => d.revenue).reverse(),
+      backgroundColor: 'rgba(14, 165, 233, 0.15)',
+      borderColor: '#0ea5e9',
+      borderWidth: 2,
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: '#f0f0f0' }, ticks: { font: { size: 11 } } },
+      x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    }
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'hospital/base.html' %}
+{% block title %}{{ title }} — MediCare HMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'invoice_list' %}">Invoices</a></li>
+      <li class="breadcrumb-item active">{{ title }}</li>
+    </ol>
+  </nav>
+</div>
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-receipt-cutoff text-primary me-2"></i>{{ title }}</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-section-title">Invoice Info</div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-4"><label class="form-label">Patient</label>{{ form.patient }}</div>
+            <div class="col-md-4"><label class="form-label">Appointment (optional)</label>{{ form.appointment }}</div>
+            <div class="col-md-4"><label class="form-label">Admission (optional)</label>{{ form.admission }}</div>
+            <div class="col-md-4"><label class="form-label">Invoice Date</label>{{ form.invoice_date }}</div>
+            <div class="col-md-4"><label class="form-label">Due Date</label>{{ form.due_date }}</div>
+          </div>
+          <div class="form-section-title">Charges</div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-4"><label class="form-label">Consultation Fee</label>{{ form.consultation_fee }}</div>
+            <div class="col-md-4"><label class="form-label">Medicine Charges</label>{{ form.medicine_charges }}</div>
+            <div class="col-md-4"><label class="form-label">Lab Charges</label>{{ form.lab_charges }}</div>
+            <div class="col-md-4"><label class="form-label">Room Charges</label>{{ form.room_charges }}</div>
+            <div class="col-md-4"><label class="form-label">Other Charges</label>{{ form.other_charges }}</div>
+            <div class="col-md-4"><label class="form-label">Discount</label>{{ form.discount }}</div>
+            <div class="col-md-4"><label class="form-label">Tax</label>{{ form.tax }}</div>
+          </div>
+          <div class="form-section-title">Payment</div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-4"><label class="form-label">Amount Paid</label>{{ form.paid_amount }}</div>
+            <div class="col-md-4"><label class="form-label">Payment Method</label>{{ form.payment_method }}</div>
+            <div class="col-md-4"><label class="form-label">Status</label>{{ form.status }}</div>
+            <div class="col-12"><label class="form-label">Notes</label>{{ form.notes }}</div>
+          </div>
+          <hr class="my-3">
+          <div class="d-flex gap-2 justify-content-end">
+            <a href="{% url 'invoice_list' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Cancel</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save Invoice</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

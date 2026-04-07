@@ -1,0 +1,42 @@
+{% extends 'hospital/base.html' %}
+{% block title %}{{ title }} — MediCare HMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'lab_test_list' %}">Lab Tests</a></li>
+      <li class="breadcrumb-item active">{{ title }}</li>
+    </ol>
+  </nav>
+</div>
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-flask-fill text-primary me-2"></i>{{ title }}</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label">Patient</label>{{ form.patient }}</div>
+            <div class="col-md-6"><label class="form-label">Ordering Doctor</label>{{ form.doctor }}</div>
+            <div class="col-md-6"><label class="form-label">Test Name</label>{{ form.test_name }}</div>
+            <div class="col-md-6"><label class="form-label">Test Date</label>{{ form.test_date }}</div>
+            <div class="col-md-6"><label class="form-label">Normal Range</label>{{ form.normal_range }}</div>
+            <div class="col-md-3"><label class="form-label">Cost ($)</label>{{ form.cost }}</div>
+            <div class="col-md-3"><label class="form-label">Status</label>{{ form.status }}</div>
+            <div class="col-12"><label class="form-label">Result</label>{{ form.result }}</div>
+            <div class="col-12"><label class="form-label">Notes</label>{{ form.notes }}</div>
+          </div>
+          <hr class="my-3">
+          <div class="d-flex gap-2 justify-content-end">
+            <a href="{% url 'lab_test_list' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Cancel</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save Test</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

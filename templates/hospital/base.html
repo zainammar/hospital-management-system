@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}MediCare HMS{% endblock %}</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    :root {
+      --primary: #0ea5e9;
+      --primary-dark: #0284c7;
+      --secondary: #6366f1;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --sidebar-bg: #0f172a;
+      --sidebar-width: 260px;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --bg-light: #f8fafc;
+      --border: #e2e8f0;
+      --card-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+    }
+    * { box-sizing: border-box; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-light); color: var(--text-dark); margin: 0; }
+
+    /* Sidebar */
+    #sidebar {
+      width: var(--sidebar-width); background: var(--sidebar-bg); min-height: 100vh;
+      position: fixed; left: 0; top: 0; z-index: 100; transition: transform .3s ease;
+      display: flex; flex-direction: column;
+    }
+    .sidebar-brand {
+      padding: 1.5rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.08);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .brand-icon {
+      width: 38px; height: 38px; background: var(--primary); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; flex-shrink: 0;
+    }
+    .brand-text { color: white; font-weight: 700; font-size: 1.1rem; line-height: 1.2; }
+    .brand-sub { color: rgba(255,255,255,.4); font-size: .7rem; font-weight: 400; }
+    .sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
+    .nav-section { padding: .5rem 1.25rem .25rem; color: rgba(255,255,255,.3); font-size: .65rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+    .sidebar-nav .nav-link {
+      display: flex; align-items: center; gap: 10px; padding: .6rem 1.25rem;
+      color: rgba(255,255,255,.6); text-decoration: none; font-size: .85rem; font-weight: 500;
+      border-radius: 0; transition: all .2s; margin: 1px 0;
+    }
+    .sidebar-nav .nav-link:hover { color: white; background: rgba(255,255,255,.06); }
+    .sidebar-nav .nav-link.active { color: white; background: rgba(14,165,233,.2); border-right: 3px solid var(--primary); }
+    .sidebar-nav .nav-link i { font-size: 1rem; width: 20px; flex-shrink: 0; }
+    .sidebar-footer { padding: 1rem 1.25rem; border-top: 1px solid rgba(255,255,255,.08); }
+    .sidebar-user { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: .8rem; font-weight: 700; }
+    .user-info .name { color: white; font-size: .82rem; font-weight: 600; }
+    .user-info .role { color: rgba(255,255,255,.4); font-size: .7rem; }
+
+    /* Main content */
+    #main { margin-left: var(--sidebar-width); min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar {
+      background: white; border-bottom: 1px solid var(--border); padding: .75rem 1.75rem;
+      display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 99;
+    }
+    .topbar-title { font-size: 1rem; font-weight: 700; color: var(--text-dark); }
+    .topbar-right { display: flex; align-items: center; gap: 1rem; }
+    .topbar-right .badge-notif { background: var(--danger); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: .6rem; display: flex; align-items: center; justify-content: center; position: absolute; top: -4px; right: -4px; }
+    .content-area { padding: 1.75rem; flex: 1; }
+
+    /* Cards */
+    .card { border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--card-shadow); background: white; }
+    .card-header { background: transparent; border-bottom: 1px solid var(--border); padding: 1rem 1.25rem; font-weight: 600; font-size: .9rem; }
+
+    /* Stat cards */
+    .stat-card { border-radius: 12px; padding: 1.25rem; color: white; position: relative; overflow: hidden; }
+    .stat-card::before { content: ''; position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,.1); border-radius: 50%; }
+    .stat-card .stat-icon { font-size: 1.8rem; margin-bottom: .5rem; opacity: .9; }
+    .stat-card .stat-value { font-size: 2rem; font-weight: 800; line-height: 1; }
+    .stat-card .stat-label { font-size: .8rem; opacity: .8; margin-top: .25rem; }
+    .stat-card.blue { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+    .stat-card.purple { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+    .stat-card.green { background: linear-gradient(135deg, #10b981, #059669); }
+    .stat-card.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .stat-card.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .stat-card.teal { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+
+    /* Badges */
+    .badge { font-size: .72rem; font-weight: 600; padding: .3em .7em; border-radius: 6px; }
+    .badge-scheduled { background: #dbeafe; color: #1d4ed8; }
+    .badge-confirmed { background: #dcfce7; color: #166534; }
+    .badge-completed { background: #f0fdf4; color: #15803d; }
+    .badge-cancelled { background: #fee2e2; color: #991b1b; }
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    .badge-paid { background: #dcfce7; color: #166534; }
+    .badge-admitted { background: #dbeafe; color: #1e40af; }
+    .badge-discharged { background: #f3f4f6; color: #374151; }
+
+    /* Tables */
+    .table { font-size: .85rem; }
+    .table th { font-weight: 600; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); background: #f8fafc; border-color: var(--border); }
+    .table td { border-color: var(--border); vertical-align: middle; }
+    .table-hover tbody tr:hover { background: #f0f9ff; }
+
+    /* Forms */
+    .form-control, .form-select { font-size: .875rem; border-color: var(--border); border-radius: 8px; padding: .5rem .75rem; }
+    .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(14,165,233,.15); }
+    .form-label { font-size: .825rem; font-weight: 600; color: var(--text-dark); margin-bottom: .35rem; }
+    .form-section-title { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: .75rem; padding-bottom: .5rem; border-bottom: 1px solid var(--border); }
+
+    /* Buttons */
+    .btn { font-size: .85rem; font-weight: 600; border-radius: 8px; padding: .45rem 1rem; }
+    .btn-primary { background: var(--primary); border-color: var(--primary); }
+    .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+    .btn-sm { font-size: .78rem; padding: .3rem .65rem; }
+
+    /* Alerts */
+    .alert { border-radius: 10px; font-size: .875rem; border: none; }
+    .alert-success { background: #dcfce7; color: #166534; }
+    .alert-danger { background: #fee2e2; color: #991b1b; }
+    .alert-warning { background: #fef3c7; color: #92400e; }
+
+    /* Search */
+    .search-input { max-width: 280px; }
+    .input-group .btn { border-radius: 0 8px 8px 0 !important; }
+    .input-group .form-control { border-radius: 8px 0 0 8px !important; }
+
+    /* Timeline / info items */
+    .info-item { display: flex; align-items: flex-start; gap: .75rem; padding: .6rem 0; border-bottom: 1px solid var(--border); }
+    .info-item:last-child { border-bottom: none; }
+    .info-label { font-size: .75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; min-width: 130px; }
+    .info-value { font-size: .875rem; color: var(--text-dark); }
+
+    /* Patient ID tag */
+    .id-tag { font-family: 'JetBrains Mono', monospace; font-size: .8rem; background: var(--bg-light); border: 1px solid var(--border); padding: .2rem .5rem; border-radius: 6px; color: var(--text-muted); }
+
+    /* Breadcrumb */
+    .breadcrumb { font-size: .8rem; }
+    .breadcrumb-item a { color: var(--primary); text-decoration: none; }
+    .breadcrumb-item.active { color: var(--text-muted); }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+    .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: .3; }
+
+    @media (max-width: 768px) {
+      #sidebar { transform: translateX(-100%); }
+      #sidebar.open { transform: translateX(0); }
+      #main { margin-left: 0; }
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+    <div>
+      <div class="brand-text">MediCare</div>
+      <div class="brand-sub">Hospital Management</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+      <i class="bi bi-grid-fill"></i> Dashboard
+    </a>
+
+    <div class="nav-section mt-2">Patients & Doctors</div>
+    <a href="{% url 'patient_list' %}" class="nav-link {% if 'patient' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-people-fill"></i> Patients
+    </a>
+    <a href="{% url 'doctor_list' %}" class="nav-link {% if 'doctor' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-person-badge-fill"></i> Doctors
+    </a>
+    <a href="{% url 'staff_list' %}" class="nav-link {% if 'staff' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-person-workspace"></i> Staff
+    </a>
+
+    <div class="nav-section mt-2">Clinical</div>
+    <a href="{% url 'appointment_list' %}" class="nav-link {% if 'appointment' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-calendar-check-fill"></i> Appointments
+    </a>
+    <a href="{% url 'medical_record_list' %}" class="nav-link {% if 'medical_record' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-file-medical-fill"></i> Medical Records
+    </a>
+    <a href="{% url 'lab_test_list' %}" class="nav-link {% if 'lab_test' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-flask-fill"></i> Lab Tests
+    </a>
+
+    <div class="nav-section mt-2">Ward & Billing</div>
+    <a href="{% url 'ward_list' %}" class="nav-link {% if 'ward' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-building-fill"></i> Wards
+    </a>
+    <a href="{% url 'admission_list' %}" class="nav-link {% if 'admission' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-hospital-fill"></i> Admissions
+    </a>
+    <a href="{% url 'invoice_list' %}" class="nav-link {% if 'invoice' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-receipt-cutoff"></i> Invoices
+    </a>
+
+    <div class="nav-section mt-2">Admin</div>
+    <a href="{% url 'department_list' %}" class="nav-link {% if 'department' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-diagram-3-fill"></i> Departments
+    </a>
+    <a href="{% url 'reports' %}" class="nav-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %}">
+      <i class="bi bi-bar-chart-fill"></i> Reports
+    </a>
+    <a href="/admin/" class="nav-link">
+      <i class="bi bi-shield-lock-fill"></i> Admin Panel
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="avatar">{{ request.user.username|slice:":1"|upper }}</div>
+      <div class="user-info">
+        <div class="name">{{ request.user.username }}</div>
+        <div class="role">Administrator</div>
+      </div>
+      <a href="{% url 'logout' %}" class="ms-auto text-white opacity-50" style="font-size:.9rem;"><i class="bi bi-box-arrow-right"></i></a>
+    </div>
+  </div>
+</div>
+
+<div id="main">
+  <div class="topbar">
+    <div class="d-flex align-items-center gap-2">
+      <button class="btn btn-sm btn-light d-md-none" onclick="document.getElementById('sidebar').classList.toggle('open')">
+        <i class="bi bi-list"></i>
+      </button>
+      <div class="topbar-title">{% block page_title %}Dashboard{% endblock %}</div>
+    </div>
+    <div class="topbar-right">
+      <span class="text-muted" style="font-size:.8rem;">{% now "D, d M Y" %}</span>
+    </div>
+  </div>
+
+  <div class="content-area">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
+          <i class="bi bi-check-circle me-2"></i>{{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

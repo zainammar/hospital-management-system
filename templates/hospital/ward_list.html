@@ -1,0 +1,64 @@
+{% extends 'hospital/base.html' %}
+{% block title %}Wards — MediCare HMS{% endblock %}
+{% block page_title %}Ward Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+      <li class="breadcrumb-item active">Wards</li>
+    </ol>
+  </nav>
+  <a href="{% url 'ward_create' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add Ward</a>
+</div>
+
+<div class="row g-3">
+  {% for ward in wards %}
+  <div class="col-md-6 col-xl-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div>
+            <h6 class="fw-bold mb-1">{{ ward.name }}</h6>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">{{ ward.ward_type }}</span>
+          </div>
+          <a href="{% url 'ward_update' ward.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+        </div>
+        <div class="row g-2 text-center mb-3">
+          <div class="col-4">
+            <div class="p-2 rounded-3" style="background:#f0f9ff;">
+              <div class="fw-bold text-primary" style="font-size:1.5rem;">{{ ward.total_beds }}</div>
+              <div class="text-muted" style="font-size:.7rem;">Total Beds</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="p-2 rounded-3" style="background:#f0fdf4;">
+              <div class="fw-bold text-success" style="font-size:1.5rem;">{{ ward.available_beds }}</div>
+              <div class="text-muted" style="font-size:.7rem;">Available</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="p-2 rounded-3" style="background:#fef3c7;">
+              <div class="fw-bold text-warning" style="font-size:1.5rem;">{{ ward.total_beds|add:ward.available_beds|add:"-2" }}</div>
+              <div class="text-muted" style="font-size:.7rem;">Occupied</div>
+            </div>
+          </div>
+        </div>
+        <div class="info-item"><span class="info-label">Department</span><span class="info-value" style="font-size:.8rem;">{{ ward.department.name|default:"General" }}</span></div>
+        <div class="info-item"><span class="info-label">Floor</span><span class="info-value" style="font-size:.8rem;">Floor {{ ward.floor }}</span></div>
+        {% if ward.description %}
+        <p class="text-muted mb-0 mt-2" style="font-size:.78rem;">{{ ward.description|truncatechars:80 }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12">
+    <div class="card">
+      <div class="empty-state"><i class="bi bi-building"></i><h6>No wards added yet</h6><a href="{% url 'ward_create' %}" class="btn btn-primary btn-sm mt-2">Add First Ward</a></div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

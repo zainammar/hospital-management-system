@@ -1,0 +1,173 @@
+{% extends 'hospital/base.html' %}
+{% block title %}Dashboard — MediCare HMS{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="stat-card blue">
+      <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+      <div class="stat-value">{{ total_patients }}</div>
+      <div class="stat-label">Total Patients</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="stat-card purple">
+      <div class="stat-icon"><i class="bi bi-person-badge-fill"></i></div>
+      <div class="stat-value">{{ total_doctors }}</div>
+      <div class="stat-label">Active Doctors</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="stat-card green">
+      <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
+      <div class="stat-value">{{ today_appointments }}</div>
+      <div class="stat-label">Today's Appts</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="stat-card orange">
+      <div class="stat-icon"><i class="bi bi-hospital-fill"></i></div>
+      <div class="stat-value">{{ admitted_patients }}</div>
+      <div class="stat-label">Admitted</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="stat-card red">
+      <div class="stat-icon"><i class="bi bi-flask-fill"></i></div>
+      <div class="stat-value">{{ pending_labs }}</div>
+      <div class="stat-label">Pending Labs</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="stat-card teal">
+      <div class="stat-icon"><i class="bi bi-currency-dollar"></i></div>
+      <div class="stat-value">${{ monthly_revenue|floatformat:0 }}</div>
+      <div class="stat-label">Monthly Revenue</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <!-- Upcoming Appointments -->
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-calendar-check text-primary me-2"></i>Upcoming Appointments</span>
+        <a href="{% url 'appointment_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+      </div>
+      <div class="card-body p-0">
+        {% if upcoming_appointments %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Type</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                {% for apt in upcoming_appointments %}
+                <tr>
+                  <td><a href="{% url 'patient_detail' apt.patient.pk %}" class="text-decoration-none fw-600">{{ apt.patient.full_name }}</a></td>
+                  <td class="text-muted" style="font-size:.8rem;">{{ apt.doctor.full_name }}</td>
+                  <td><span class="id-tag">{{ apt.appointment_date }}</span></td>
+                  <td style="font-size:.78rem;">{{ apt.appointment_type }}</td>
+                  <td><span class="badge badge-{{ apt.status|lower }}">{{ apt.status }}</span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="empty-state"><i class="bi bi-calendar-x"></i><p>No upcoming appointments</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Patients -->
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-person-plus text-success me-2"></i>Recent Patients</span>
+        <a href="{% url 'patient_create' %}" class="btn btn-sm btn-success">+ New</a>
+      </div>
+      <div class="card-body p-0">
+        {% if recent_patients %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr><th>ID</th><th>Name</th><th>Gender</th><th>Blood</th><th>Phone</th></tr>
+              </thead>
+              <tbody>
+                {% for p in recent_patients %}
+                <tr>
+                  <td><span class="id-tag">{{ p.patient_id }}</span></td>
+                  <td><a href="{% url 'patient_detail' p.pk %}" class="text-decoration-none fw-600">{{ p.full_name }}</a></td>
+                  <td style="font-size:.8rem;">{{ p.gender }}</td>
+                  <td><span class="badge bg-light text-dark border">{{ p.blood_group }}</span></td>
+                  <td style="font-size:.8rem;" class="text-muted">{{ p.phone }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="empty-state"><i class="bi bi-people"></i><p>No patients yet</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-lightning-fill text-warning me-2"></i>Quick Actions</div>
+      <div class="card-body">
+        <div class="d-grid gap-2">
+          <a href="{% url 'patient_create' %}" class="btn btn-outline-primary btn-sm text-start">
+            <i class="bi bi-person-plus me-2"></i>Register New Patient
+          </a>
+          <a href="{% url 'appointment_create' %}" class="btn btn-outline-success btn-sm text-start">
+            <i class="bi bi-calendar-plus me-2"></i>Schedule Appointment
+          </a>
+          <a href="{% url 'admission_create' %}" class="btn btn-outline-warning btn-sm text-start">
+            <i class="bi bi-hospital me-2"></i>New Admission
+          </a>
+          <a href="{% url 'invoice_create' %}" class="btn btn-outline-info btn-sm text-start">
+            <i class="bi bi-receipt me-2"></i>Create Invoice
+          </a>
+          <a href="{% url 'lab_test_create' %}" class="btn btn-outline-secondary btn-sm text-start">
+            <i class="bi bi-flask me-2"></i>New Lab Test
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Departments -->
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <span><i class="bi bi-diagram-3 text-secondary me-2"></i>Departments</span>
+        <a href="{% url 'department_list' %}" class="btn btn-sm btn-outline-secondary">Manage</a>
+      </div>
+      <div class="card-body">
+        <div class="row g-2">
+          {% for dept in departments %}
+          <div class="col-6 col-md-4">
+            <div class="border rounded-3 p-3" style="background:#f8fafc;">
+              <div style="font-size:.875rem;font-weight:700;color:#0f172a;">{{ dept.name }}</div>
+              <div style="font-size:.75rem;color:#64748b;">{{ dept.doctor_count }} doctor{{ dept.doctor_count|pluralize }}</div>
+              {% if dept.head_doctor %}
+                <div style="font-size:.72rem;color:#94a3b8;margin-top:.2rem;">Head: {{ dept.head_doctor }}</div>
+              {% endif %}
+            </div>
+          </div>
+          {% empty %}
+            <div class="col-12 text-center text-muted py-3" style="font-size:.875rem;">No departments yet. <a href="{% url 'department_create' %}">Add one</a>.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

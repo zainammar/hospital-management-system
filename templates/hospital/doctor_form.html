@@ -1,0 +1,57 @@
+{% extends 'hospital/base.html' %}
+{% block title %}{{ title }} — MediCare HMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'doctor_list' %}">Doctors</a></li>
+      <li class="breadcrumb-item active">{{ title }}</li>
+    </ol>
+  </nav>
+</div>
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-person-badge-fill text-primary me-2"></i>{{ title }}</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-section-title">Personal Information</div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6"><label class="form-label">First Name</label>{{ form.first_name }}{% if form.first_name.errors %}<div class="text-danger" style="font-size:.78rem;">{{ form.first_name.errors }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label">Last Name</label>{{ form.last_name }}{% if form.last_name.errors %}<div class="text-danger" style="font-size:.78rem;">{{ form.last_name.errors }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label">Email</label>{{ form.email }}{% if form.email.errors %}<div class="text-danger" style="font-size:.78rem;">{{ form.email.errors }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label">Phone</label>{{ form.phone }}</div>
+          </div>
+          <div class="form-section-title">Professional Information</div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6"><label class="form-label">Specialization</label>{{ form.specialization }}</div>
+            <div class="col-md-6"><label class="form-label">Department</label>{{ form.department }}</div>
+            <div class="col-md-6"><label class="form-label">License Number</label>{{ form.license_number }}{% if form.license_number.errors %}<div class="text-danger" style="font-size:.78rem;">{{ form.license_number.errors }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label">Years of Experience</label>{{ form.experience_years }}</div>
+            <div class="col-md-6"><label class="form-label">Consultation Fee ($)</label>{{ form.consultation_fee }}</div>
+          </div>
+          <div class="form-section-title">Availability</div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-4"><label class="form-label">Available Days</label>{{ form.available_days }}</div>
+            <div class="col-md-4"><label class="form-label">Available From</label>{{ form.available_from }}</div>
+            <div class="col-md-4"><label class="form-label">Available To</label>{{ form.available_to }}</div>
+          </div>
+          <div class="row g-3 mb-4">
+            <div class="col-12"><label class="form-label">Bio</label>{{ form.bio }}</div>
+            <div class="col-md-6 d-flex align-items-center gap-2 pt-2">{{ form.is_active }}<label class="form-check-label">Active Doctor</label></div>
+          </div>
+          <hr class="my-3">
+          <div class="d-flex gap-2 justify-content-end">
+            <a href="{% url 'doctor_list' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Cancel</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save Doctor</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

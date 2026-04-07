@@ -1,0 +1,40 @@
+{% extends 'hospital/base.html' %}
+{% block title %}{{ title }} — MediCare HMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'ward_list' %}">Wards</a></li>
+      <li class="breadcrumb-item active">{{ title }}</li>
+    </ol>
+  </nav>
+</div>
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-building-fill text-primary me-2"></i>{{ title }}</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label">Ward Name</label>{{ form.name }}</div>
+            <div class="col-md-6"><label class="form-label">Ward Type</label>{{ form.ward_type }}</div>
+            <div class="col-md-6"><label class="form-label">Department</label>{{ form.department }}</div>
+            <div class="col-md-3"><label class="form-label">Total Beds</label>{{ form.total_beds }}</div>
+            <div class="col-md-3"><label class="form-label">Floor</label>{{ form.floor }}</div>
+            <div class="col-12"><label class="form-label">Description</label>{{ form.description }}</div>
+            <div class="col-md-6 d-flex align-items-center gap-2 pt-2">{{ form.is_active }}<label class="form-check-label">Active Ward</label></div>
+          </div>
+          <hr class="my-3">
+          <div class="d-flex gap-2 justify-content-end">
+            <a href="{% url 'ward_list' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Cancel</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save Ward</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

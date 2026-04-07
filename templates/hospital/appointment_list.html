@@ -1,0 +1,73 @@
+{% extends 'hospital/base.html' %}
+{% block title %}Appointments — MediCare HMS{% endblock %}
+{% block page_title %}Appointments{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+      <li class="breadcrumb-item active">Appointments</li>
+    </ol>
+  </nav>
+  <a href="{% url 'appointment_create' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Schedule</a>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+      <span><i class="bi bi-calendar-check-fill text-primary me-2"></i>All Appointments ({{ appointments|length }})</span>
+      <div class="d-flex gap-2 flex-wrap">
+        <form class="d-flex gap-2" method="get">
+          <select name="status" class="form-select form-select-sm" style="width:140px;" onchange="this.form.submit()">
+            <option value="">All Status</option>
+            <option value="Scheduled" {% if status_filter == 'Scheduled' %}selected{% endif %}>Scheduled</option>
+            <option value="Confirmed" {% if status_filter == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+            <option value="Completed" {% if status_filter == 'Completed' %}selected{% endif %}>Completed</option>
+            <option value="Cancelled" {% if status_filter == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+          </select>
+          <div class="input-group" style="width:220px;">
+            <input type="text" name="q" class="form-control form-control-sm" placeholder="Search..." value="{{ query }}">
+            <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-search"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="card-body p-0">
+    {% if appointments %}
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr><th>Apt ID</th><th>Patient</th><th>Doctor</th><th>Date & Time</th><th>Type</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          {% for apt in appointments %}
+          <tr>
+            <td><span class="id-tag">{{ apt.appointment_id }}</span></td>
+            <td>
+              <a href="{% url 'patient_detail' apt.patient.pk %}" class="text-decoration-none fw-semibold text-dark">{{ apt.patient.full_name }}</a>
+              <div class="text-muted" style="font-size:.75rem;"><span class="id-tag">{{ apt.patient.patient_id }}</span></div>
+            </td>
+            <td style="font-size:.83rem;">{{ apt.doctor.full_name }}</td>
+            <td>
+              <div style="font-size:.83rem;">{{ apt.appointment_date }}</div>
+              <div class="text-muted" style="font-size:.75rem;">{{ apt.appointment_time }}</div>
+            </td>
+            <td style="font-size:.8rem;">{{ apt.appointment_type }}</td>
+            <td><span class="badge badge-{{ apt.status|lower }}">{{ apt.status }}</span></td>
+            <td>
+              <a href="{% url 'appointment_update' apt.pk %}" class="btn btn-sm btn-outline-secondary me-1"><i class="bi bi-pencil"></i></a>
+              <a href="{% url 'appointment_delete' apt.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state"><i class="bi bi-calendar-x"></i><h6>No appointments found</h6></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

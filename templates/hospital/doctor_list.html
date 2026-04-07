@@ -1,0 +1,58 @@
+{% extends 'hospital/base.html' %}
+{% block title %}Doctors — MediCare HMS{% endblock %}
+{% block page_title %}Doctor Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+      <li class="breadcrumb-item active">Doctors</li>
+    </ol>
+  </nav>
+  <a href="{% url 'doctor_create' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add Doctor</a>
+</div>
+
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span><i class="bi bi-person-badge-fill text-primary me-2"></i>All Doctors ({{ doctors|length }})</span>
+    <form class="d-flex search-input" method="get">
+      <div class="input-group">
+        <input type="text" name="q" class="form-control form-control-sm" placeholder="Search..." value="{{ query }}">
+        <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-search"></i></button>
+      </div>
+    </form>
+  </div>
+  <div class="card-body p-0">
+    {% if doctors %}
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead><tr><th>Name</th><th>Specialization</th><th>Department</th><th>License</th><th>Fee</th><th>Available</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for doc in doctors %}
+          <tr>
+            <td>
+              <a href="{% url 'doctor_detail' doc.pk %}" class="text-decoration-none fw-semibold text-dark">{{ doc.full_name }}</a>
+              <div class="text-muted" style="font-size:.75rem;">{{ doc.email }}</div>
+            </td>
+            <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle">{{ doc.specialization }}</span></td>
+            <td style="font-size:.83rem;">{{ doc.department.name|default:"-" }}</td>
+            <td><span class="id-tag">{{ doc.license_number }}</span></td>
+            <td>${{ doc.consultation_fee }}</td>
+            <td style="font-size:.78rem;" class="text-muted">{{ doc.available_days }}</td>
+            <td>
+              <a href="{% url 'doctor_detail' doc.pk %}" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-eye"></i></a>
+              <a href="{% url 'doctor_update' doc.pk %}" class="btn btn-sm btn-outline-secondary me-1"><i class="bi bi-pencil"></i></a>
+              <a href="{% url 'doctor_delete' doc.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state"><i class="bi bi-person-badge"></i><h6>No doctors found</h6></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

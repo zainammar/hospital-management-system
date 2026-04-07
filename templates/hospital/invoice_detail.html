@@ -1,0 +1,97 @@
+{% extends 'hospital/base.html' %}
+{% block title %}{{ invoice.invoice_id }} — MediCare HMS{% endblock %}
+{% block page_title %}Invoice Detail{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'invoice_list' %}">Invoices</a></li>
+      <li class="breadcrumb-item active">{{ invoice.invoice_id }}</li>
+    </ol>
+  </nav>
+  <div class="d-flex gap-2">
+    <a href="{% url 'invoice_update' invoice.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil me-1"></i>Edit</a>
+    <button onclick="window.print()" class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer me-1"></i>Print</button>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-body">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-start mb-4 pb-3 border-bottom">
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <div style="width:36px;height:36px;background:linear-gradient(135deg,#0ea5e9,#6366f1);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;">
+                <i class="bi bi-heart-pulse-fill"></i>
+              </div>
+              <div>
+                <div style="font-weight:800;font-size:1.1rem;">MediCare HMS</div>
+                <div style="font-size:.72rem;color:#64748b;">Hospital Management System</div>
+              </div>
+            </div>
+            <div class="text-muted" style="font-size:.8rem;">123 Medical Ave, Healthcare City</div>
+          </div>
+          <div class="text-end">
+            <div class="mb-1"><span class="id-tag" style="font-size:.9rem;">{{ invoice.invoice_id }}</span></div>
+            <div style="font-size:.8rem;" class="text-muted">Date: {{ invoice.invoice_date }}</div>
+            {% if invoice.due_date %}<div style="font-size:.8rem;" class="text-muted">Due: {{ invoice.due_date }}</div>{% endif %}
+            <div class="mt-1"><span class="badge badge-{{ invoice.status|lower }} fs-6">{{ invoice.status }}</span></div>
+          </div>
+        </div>
+
+        <!-- Patient Info -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="form-section-title">Bill To</div>
+            <div class="fw-semibold">{{ invoice.patient.full_name }}</div>
+            <div class="text-muted" style="font-size:.83rem;"><span class="id-tag">{{ invoice.patient.patient_id }}</span></div>
+            <div class="text-muted" style="font-size:.83rem;">{{ invoice.patient.phone }}</div>
+          </div>
+          {% if invoice.payment_method %}
+          <div class="col-md-6">
+            <div class="form-section-title">Payment</div>
+            <div style="font-size:.875rem;">Method: <span class="fw-semibold">{{ invoice.payment_method }}</span></div>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Charges -->
+        <table class="table table-bordered mb-4" style="font-size:.875rem;">
+          <thead style="background:#f8fafc;">
+            <tr><th>Description</th><th class="text-end">Amount</th></tr>
+          </thead>
+          <tbody>
+            {% if invoice.consultation_fee > 0 %}<tr><td>Consultation Fee</td><td class="text-end">${{ invoice.consultation_fee }}</td></tr>{% endif %}
+            {% if invoice.medicine_charges > 0 %}<tr><td>Medicine Charges</td><td class="text-end">${{ invoice.medicine_charges }}</td></tr>{% endif %}
+            {% if invoice.lab_charges > 0 %}<tr><td>Laboratory Charges</td><td class="text-end">${{ invoice.lab_charges }}</td></tr>{% endif %}
+            {% if invoice.room_charges > 0 %}<tr><td>Room/Ward Charges</td><td class="text-end">${{ invoice.room_charges }}</td></tr>{% endif %}
+            {% if invoice.other_charges > 0 %}<tr><td>Other Charges</td><td class="text-end">${{ invoice.other_charges }}</td></tr>{% endif %}
+          </tbody>
+          <tfoot style="background:#f8fafc;">
+            {% if invoice.discount > 0 %}<tr><td class="text-success"><strong>Discount</strong></td><td class="text-end text-success">-${{ invoice.discount }}</td></tr>{% endif %}
+            {% if invoice.tax > 0 %}<tr><td>Tax</td><td class="text-end">${{ invoice.tax }}</td></tr>{% endif %}
+            <tr style="background:#0f172a;color:white;"><td><strong>Total Amount</strong></td><td class="text-end"><strong>${{ invoice.total_amount }}</strong></td></tr>
+            <tr><td class="text-success"><strong>Amount Paid</strong></td><td class="text-end text-success"><strong>${{ invoice.paid_amount }}</strong></td></tr>
+            <tr>
+              <td><strong>Balance Due</strong></td>
+              <td class="text-end {% if invoice.balance > 0 %}text-danger{% else %}text-success{% endif %}">
+                <strong>${{ invoice.balance }}</strong>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+
+        {% if invoice.notes %}
+        <div class="p-3 rounded-3" style="background:#f8fafc;font-size:.83rem;">
+          <strong>Notes:</strong> {{ invoice.notes }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
