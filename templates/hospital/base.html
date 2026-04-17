@@ -6,6 +6,7 @@
   <title>{% block title %}MediCare HMS{% endblock %}</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  {% load static %}
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
     :root {
@@ -41,7 +42,7 @@
       display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; flex-shrink: 0;
     }
     .brand-text { color: white; font-weight: 700; font-size: 1.1rem; line-height: 1.2; }
-    .brand-sub { color: rgba(255,255,255,.4); font-size: .7rem; font-weight: 400; }
+    .brand-sub { color: white; font-size: .9rem; font-weight: 400; }
     .sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
     .nav-section { padding: .5rem 1.25rem .25rem; color: rgba(255,255,255,.3); font-size: .65rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
     .sidebar-nav .nav-link {
@@ -156,9 +157,10 @@
 
 <div id="sidebar">
   <div class="sidebar-brand">
-    <div class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+    <img src="{% static 'images/zain-logo.png' %}" alt="Logo" style="height:70px;">
     <div>
-      <div class="brand-text">MediCare</div>
+  
+      <div class="brand-text">HMS</div>
       <div class="brand-sub">Hospital Management</div>
     </div>
   </div>
@@ -168,7 +170,10 @@
     <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
       <i class="bi bi-grid-fill"></i> Dashboard
     </a>
-
+    <a href="{% url 'logout' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+      <i class="bi bi-logout-fill"></i> logout
+    </a>
+   
     <div class="nav-section mt-2">Patients & Doctors</div>
     <a href="{% url 'patient_list' %}" class="nav-link {% if 'patient' in request.resolver_match.url_name %}active{% endif %}">
       <i class="bi bi-people-fill"></i> Patients
@@ -221,7 +226,7 @@
         <div class="name">{{ request.user.username }}</div>
         <div class="role">Administrator</div>
       </div>
-      <a href="{% url 'logout' %}" class="ms-auto text-white opacity-50" style="font-size:.9rem;"><i class="bi bi-box-arrow-right"></i></a>
+      <a href="{% url 'logout' %}" class="ms-auto text-white opacity-50" style="font-size:.9rem;"><i class="bi bi-box-arrow-right"></i>Log Out</a>
     </div>
   </div>
 </div>
