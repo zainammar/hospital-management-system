@@ -4,10 +4,16 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ── Security ─────────────────────────────────────────────────────────────────
+# ── Security ──────────────────────────────────────────────────────────────────
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-hospital-management-system-secret-key-2024')
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
+
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
+
+# Allow Railway's auto-generated domain
+CSRF_TRUSTED_ORIGINS = [
+    f"https://{host}" for host in config('ALLOWED_HOSTS', default='').split(',') if host
+] + ['https://*.railway.app', 'http://localhost:8000', 'http://127.0.0.1:8000']
 
 # ── Apps ──────────────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
@@ -22,7 +28,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',       # serve static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -52,27 +58,34 @@ TEMPLATES = [
 WSGI_APPLICATION = 'hospital_management.wsgi.application'
 
 # ── Database ──────────────────────────────────────────────────────────────────
-# Uses PostgreSQL when POSTGRES_HOST is set, otherwise falls back to SQLite
-POSTGRES_HOST = config('POSTGRES_HOST', default='')
+# Railway provides DATABASE_URL automatically when PostgreSQL is added
+DATABASE_URL = config('DATABASE_URL', default='')
 
-if POSTGRES_HOST:
+if DATABASE_URL:
+    import dj_database_url
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('POSTGRES_DB', default='medicare_db'),
-            'USER': config('POSTGRES_USER', default='medicare_user'),
-            'PASSWORD': config('POSTGRES_PASSWORD', default='medicare_pass'),
-            'HOST': POSTGRES_HOST,
-            'PORT': config('POSTGRES_PORT', default='5432'),
-        }
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+    POSTGRES_HOST = config('POSTGRES_HOST', default='')
+    if POSTGRES_HOST:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': config('POSTGRES_DB', default='medicare_db'),
+                'USER': config('POSTGRES_USER', default='medicare_user'),
+                'PASSWORD': config('POSTGRES_PASSWORD', default='medicare_pass'),
+                'HOST': POSTGRES_HOST,
+                'PORT': config('POSTGRES_PORT', default='5432'),
+            }
         }
-    }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 
 # ── Password Validation ───────────────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = []
@@ -83,12 +96,10 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# ── Static & Media Files ──────────────────────────────────────────────────────
+# ── Static & Media ────────────────────────────────────────────────────────────
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# WhiteNoise compressed static files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
