@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+
+  # ── Django Web Application ──────────────────────────────────────────────────
+  web:
+    build: .
+    container_name: medicare_web
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    environment:
+      - DEBUG=1
+      - DJANGO_SETTINGS_MODULE=hospital_management.settings
+      - DATABASE_URL=sqlite:///db.sqlite3
+    depends_on:
+      - db
+
+  # ── PostgreSQL Database ─────────────────────────────────────────────────────
+  db:
+    image: postgres:15-alpine
+    container_name: medicare_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: medicare_db
+      POSTGRES_USER: medicare_user
+      POSTGRES_PASSWORD: medicare_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+# ── Volumes ─────────────────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
