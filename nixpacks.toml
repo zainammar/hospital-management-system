@@ -1,15 +1,8 @@
-[phases.setup]
-nixPkgs = ["python310", "gcc", "libpq"]
-
 [phases.install]
 cmds = ["pip install -r requirements.txt"]
 
 [phases.build]
-cmds = [
-  "python manage.py collectstatic --noinput",
-  "python manage.py migrate --noinput",
-  "python setup_demo.py"
-]
+cmds = ["python manage.py collectstatic --noinput"]
 
 [start]
-cmd = "gunicorn hospital_management.wsgi:application --bind 0.0.0.0:$PORT"
+cmd = "python manage.py migrate --noinput && python setup_demo.py; gunicorn hospital_management.wsgi:application --bind 0.0.0.0:$PORT"
