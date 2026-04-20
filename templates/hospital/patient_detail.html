@@ -18,86 +18,113 @@
 </div>
 
 <div class="row g-3">
-  <!-- Patient Info Card -->
-  <div class="col-lg-4">
+  <!-- Patient Info Card - Full Width -->
+  <div class="col-12">
     <div class="card">
-      <div class="card-body text-center py-4">
-        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
-             style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:white;font-size:1.75rem;font-weight:800;">
-          {{ patient.first_name|slice:":1" }}
+      <div class="card-body py-4">
+        <div class="row align-items-center">
+          <div class="col-md-3 text-center text-md-start mb-3 mb-md-0">
+            <div class="mx-auto mx-md-0 mb-3 d-flex align-items-center justify-content-center"
+                 style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:white;font-size:2.25rem;font-weight:800;">
+              {{ patient.first_name|slice:":1" }}
+            </div>
+            <h4 class="fw-bold mb-1">{{ patient.full_name }}</h4>
+            <div class="mb-2"><span class="id-tag">{{ patient.patient_id }}</span></div>
+            <div class="d-flex justify-content-center justify-content-md-start gap-2 flex-wrap">
+              {% if patient.blood_group %}<span class="badge bg-danger text-white">{{ patient.blood_group }}</span>{% endif %}
+              <span class="badge bg-secondary text-white">{{ patient.gender }}</span>
+              <span class="badge bg-info text-white">{{ patient.age }} years</span>
+            </div>
+          </div>
+          
+          <div class="col-md-9">
+            <div class="row g-3">
+              <div class="col-sm-6 col-lg-4">
+                <div class="info-item">
+                  <span class="info-label"><i class="bi bi-telephone me-1"></i>Phone</span>
+                  <span class="info-value">{{ patient.phone }}</span>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-4">
+                <div class="info-item">
+                  <span class="info-label"><i class="bi bi-envelope me-1"></i>Email</span>
+                  <span class="info-value">{{ patient.email|default:"N/A" }}</span>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-4">
+                <div class="info-item">
+                  <span class="info-label"><i class="bi bi-calendar me-1"></i>DOB</span>
+                  <span class="info-value">{{ patient.date_of_birth }}</span>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-4">
+                <div class="info-item">
+                  <span class="info-label"><i class="bi bi-geo-alt me-1"></i>City</span>
+                  <span class="info-value">{{ patient.city|default:"N/A" }}</span>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-4">
+                <div class="info-item">
+                  <span class="info-label"><i class="bi bi-heart me-1"></i>Marital</span>
+                  <span class="info-value">{{ patient.marital_status|default:"N/A" }}</span>
+                </div>
+              </div>
+              {% if patient.insurance_provider %}
+              <div class="col-sm-6 col-lg-4">
+                <div class="info-item">
+                  <span class="info-label"><i class="bi bi-shield me-1"></i>Insurance</span>
+                  <span class="info-value">{{ patient.insurance_provider }}</span>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
         </div>
-        <h5 class="fw-bold mb-1">{{ patient.full_name }}</h5>
-        <div class="mb-2"><span class="id-tag">{{ patient.patient_id }}</span></div>
-        <div class="d-flex justify-content-center gap-2 flex-wrap">
-          {% if patient.blood_group %}<span class="badge bg-danger text-white">{{ patient.blood_group }}</span>{% endif %}
-          <span class="badge bg-secondary text-white">{{ patient.gender }}</span>
-          <span class="badge bg-info text-white">{{ patient.age }} years</span>
-        </div>
-      </div>
-      <div class="card-body border-top pt-3">
-        <div class="info-item">
-          <span class="info-label"><i class="bi bi-telephone me-1"></i>Phone</span>
-          <span class="info-value">{{ patient.phone }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label"><i class="bi bi-envelope me-1"></i>Email</span>
-          <span class="info-value">{{ patient.email|default:"N/A" }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label"><i class="bi bi-calendar me-1"></i>DOB</span>
-          <span class="info-value">{{ patient.date_of_birth }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label"><i class="bi bi-geo-alt me-1"></i>City</span>
-          <span class="info-value">{{ patient.city|default:"N/A" }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label"><i class="bi bi-heart me-1"></i>Marital</span>
-          <span class="info-value">{{ patient.marital_status|default:"N/A" }}</span>
-        </div>
-        {% if patient.insurance_provider %}
-        <div class="info-item">
-          <span class="info-label"><i class="bi bi-shield me-1"></i>Insurance</span>
-          <span class="info-value">{{ patient.insurance_provider }}</span>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-
-    {% if patient.allergies or patient.medical_history %}
-    <div class="card mt-3">
-      <div class="card-header"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>Medical Info</div>
-      <div class="card-body">
-        {% if patient.allergies %}
-        <div class="mb-2">
-          <div class="form-section-title">Allergies</div>
-          <p style="font-size:.85rem;color:#64748b;margin:0;">{{ patient.allergies }}</p>
-        </div>
-        {% endif %}
-        {% if patient.medical_history %}
-        <div>
-          <div class="form-section-title">Medical History</div>
-          <p style="font-size:.85rem;color:#64748b;margin:0;">{{ patient.medical_history }}</p>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-    {% endif %}
-
-    {% if patient.emergency_contact_name %}
-    <div class="card mt-3">
-      <div class="card-header"><i class="bi bi-telephone-fill text-danger me-2"></i>Emergency Contact</div>
-      <div class="card-body">
-        <div class="info-item"><span class="info-label">Name</span><span class="info-value fw-semibold">{{ patient.emergency_contact_name }}</span></div>
-        <div class="info-item"><span class="info-label">Phone</span><span class="info-value">{{ patient.emergency_contact_phone }}</span></div>
-        <div class="info-item"><span class="info-label">Relation</span><span class="info-value">{{ patient.emergency_contact_relation }}</span></div>
       </div>
     </div>
-    {% endif %}
   </div>
 
-  <!-- Tabs section -->
-  <div class="col-lg-8">
+  <!-- Medical Info + Emergency Contact Row -->
+  <div class="col-12">
+    <div class="row g-3">
+      {% if patient.allergies or patient.medical_history %}
+      <div class="{% if patient.emergency_contact_name %}col-md-6{% else %}col-12{% endif %}">
+        <div class="card h-100">
+          <div class="card-header"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>Medical Info</div>
+          <div class="card-body">
+            {% if patient.allergies %}
+            <div class="mb-2">
+              <div class="form-section-title">Allergies</div>
+              <p style="font-size:.85rem;color:#64748b;margin:0;">{{ patient.allergies }}</p>
+            </div>
+            {% endif %}
+            {% if patient.medical_history %}
+            <div>
+              <div class="form-section-title">Medical History</div>
+              <p style="font-size:.85rem;color:#64748b;margin:0;">{{ patient.medical_history }}</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if patient.emergency_contact_name %}
+      <div class="{% if patient.allergies or patient.medical_history %}col-md-6{% else %}col-12{% endif %}">
+        <div class="card h-100">
+          <div class="card-header"><i class="bi bi-telephone-fill text-danger me-2"></i>Emergency Contact</div>
+          <div class="card-body">
+            <div class="info-item"><span class="info-label">Name</span><span class="info-value fw-semibold">{{ patient.emergency_contact_name }}</span></div>
+            <div class="info-item"><span class="info-label">Phone</span><span class="info-value">{{ patient.emergency_contact_phone }}</span></div>
+            <div class="info-item"><span class="info-label">Relation</span><span class="info-value">{{ patient.emergency_contact_relation }}</span></div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Tabs section - Full Width -->
+  <div class="col-12">
     <div class="card">
       <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
@@ -120,13 +147,13 @@
                   <td>{{ apt.doctor.full_name }}</td>
                   <td style="font-size:.8rem;">{{ apt.appointment_date }}</td>
                   <td style="font-size:.8rem;">{{ apt.appointment_type }}</td>
-                  <td><span class="badge badge-{{ apt.status|lower }}">{{ apt.status }}</span></td>
+                  <td><span class="badge badge-{{ apt.status|slugify }}">{{ apt.status }}</span></td>
                 </tr>
                 {% empty %}<tr><td colspan="5" class="text-center text-muted py-3">No appointments</td></tr>{% endfor %}
               </tbody>
             </table>
           </div>
-        </div>
+          <br>
         <div class="tab-pane fade" id="records">
           <div class="table-responsive">
             <table class="table table-hover mb-0">
@@ -154,14 +181,13 @@
                   <td><span class="id-tag">{{ t.test_id }}</span></td>
                   <td>{{ t.test_name }}</td>
                   <td style="font-size:.8rem;">{{ t.test_date }}</td>
-                  <td><span class="badge badge-{{ t.status|lower|replace:" -" }}">{{ t.status }}</span></td>
+                  <td><span class="badge badge-{{ t.status|slugify }}">{{ t.status }}</span></td>
                   <td>${{ t.cost }}</td>
                 </tr>
                 {% empty %}<tr><td colspan="5" class="text-center text-muted py-3">No lab tests</td></tr>{% endfor %}
               </tbody>
             </table>
           </div>
-        </div>
         <div class="tab-pane fade" id="billing">
           <div class="table-responsive">
             <table class="table table-hover mb-0">
@@ -173,7 +199,7 @@
                   <td style="font-size:.8rem;">{{ inv.invoice_date }}</td>
                   <td>${{ inv.total_amount }}</td>
                   <td>${{ inv.paid_amount }}</td>
-                  <td><span class="badge badge-{{ inv.status|lower }}">{{ inv.status }}</span></td>
+                  <td><span class="badge badge-{{ inv.status|slugify }}">{{ inv.status }}</span></td>
                 </tr>
                 {% empty %}<tr><td colspan="5" class="text-center text-muted py-3">No invoices</td></tr>{% endfor %}
               </tbody>
@@ -191,7 +217,7 @@
                   <td>{{ adm.ward.name }}</td>
                   <td>{{ adm.bed_number }}</td>
                   <td style="font-size:.8rem;">{{ adm.admission_date }}</td>
-                  <td><span class="badge badge-{{ adm.status|lower }}">{{ adm.status }}</span></td>
+                  <td><span class="badge badge-{{ adm.status|slugify }}">{{ adm.status }}</span></td>
                 </tr>
                 {% empty %}<tr><td colspan="5" class="text-center text-muted py-3">No admissions</td></tr>{% endfor %}
               </tbody>
