@@ -59,6 +59,29 @@
     .user-info .name { color: white; font-size: .82rem; font-weight: 600; }
     .user-info .role { color: rgba(255,255,255,.4); font-size: .7rem; }
 
+
+    #sidebar {
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+     }
+
+
+     .sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+
     /* Main content */
     #main { margin-left: var(--sidebar-width); min-height: 100vh; display: flex; flex-direction: column; }
     .topbar {
